@@ -143,17 +143,29 @@ function Panzoom(
   function setTransformWithEvent(eventName: PanzoomEvent, opts: PanzoomOptions) {
     const value = { x, y, scale, isSVG }
     requestAnimationFrame(() => {
+      let hasAnimation = false
       if (typeof opts.animate === 'boolean') {
         if (opts.animate) {
           setTransition(elem, opts)
+          hasAnimation = true
         } else {
           setStyle(elem, 'transition', 'none')
         }
       }
       opts.setTransform(elem, value, opts)
+      if (hasAnimation) {
+        const callback = (e: any) => {
+          if (e.propertyName === 'transform' && e.target === elem) {
+            trigger('panzoomchange', value, opts)
+            elem.removeEventListener('transitionend', callback)
+          }
+        }
+        elem.addEventListener('transitionend', callback)
+      } else {
+        trigger('panzoomchange', value, opts)
+      }
     })
     trigger(eventName, value, opts)
-    trigger('panzoomchange', value, opts)
     return value
   }
 

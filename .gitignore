@@ -3,7 +3,8 @@ yarn.lock
 *.log
 .rpt2_cache/
 *.d.ts
-dist/
+dist/*
+!dist/panzoom.*
 coverage/
 docs/
 demo/panzoom.js
